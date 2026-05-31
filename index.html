@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="NOQCode - Designed with the future, for the future. Entwicklung & Innovation.">
+    <title>Nico Ohm - NOQCode</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #04050a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #metalCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            display: block;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,1);
+        }
+
+        .logo strong { font-weight: 600; font-size: 0.85rem; }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .tagline {
+            font-size: 2.5rem;
+            font-weight: 200;
+            letter-spacing: 0.02em;
+            line-height: 1.3;
+            max-width: 90%;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 40px rgba(0,0,0,0.85), 0 0 20px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,1);
+        }
+
+        /* ── Karten ───────────────────────────────────────────────── */
+
+        .cards-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 4rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            display: block;
+            width: 286px;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10,10,16,0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            opacity: 0.75;
+            cursor: default;
+            max-height: 88px;
+            transition:
+                max-height 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease,
+                border-color 0.4s ease,
+                box-shadow 0.4s ease;
+        }
+
+        .feature-card:hover,
+        .feature-card.card-open {
+            max-height: 820px;
+            opacity: 1;
+            border-color: rgba(255,255,255,0.28);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08),
+                0 0 28px rgba(255,255,255,0.12),
+                0 0 55px rgba(201,79,12,0.10),
+                0 8px 30px rgba(0,0,0,0.5);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 1.1rem 1.3rem;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .card-chevron {
+            margin-left: auto;
+            flex-shrink: 0;
+            width: 9px;
+            height: 9px;
+            border-right: 1.5px solid rgba(255,255,255,0.35);
+            border-bottom: 1.5px solid rgba(255,255,255,0.35);
+            transform: rotate(45deg) translateY(-2px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover .card-chevron,
+        .feature-card.card-open .card-chevron {
+            transform: rotate(-135deg) translateY(-2px);
+            border-color: rgba(255,255,255,0.65);
+        }
+
+        .card-logo {
+            width: 46px; height: 46px;
+            display: block; opacity: 0.85;
+            flex-shrink: 0;
+        }
+
+        .card-placeholder {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.16);
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.11), rgba(255,255,255,0.02)),
+                rgba(8,9,14,0.62);
+            color: rgba(255,255,255,0.62);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            opacity: 0.9;
+        }
+
+        .profile-image {
+            width: 46px;
+            height: 46px;
+            display: block;
+            flex-shrink: 0;
+            object-fit: cover;
+            object-position: center 22%;
+            filter: grayscale(1) contrast(1.05) brightness(0.86);
+            transform: scaleX(-1);
+            background: #000;
+            border: none;
+            opacity: 0.92;
+        }
+
+        .card-copy {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.18rem;
+            text-align: left;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            color: rgba(255,255,255,0.92);
+        }
+
+        .card-subtitle {
+            font-size: 0.66rem;
+            font-weight: 500;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.42);
+        }
+
+        /* ── Zeitstrang ───────────────────────────────────────────── */
+
+        .timeline {
+            position: relative;
+            padding: 0.9rem 1.3rem 1.4rem calc(1.3rem + 20px);
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* Vertikale Linie in Orange */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: calc(1.3rem + 1.5px);
+            top: 0.9rem;
+            bottom: 1.4rem;
+            width: 1px;
+            background: linear-gradient(
+                to bottom,
+                #c94f0c 0%,
+                #c94f0c 85%,
+                rgba(201,79,12,0.12) 100%
+            );
+        }
+
+        .expertise-card .timeline::before {
+            display: none;
+        }
+
+        .tl-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.12rem;
+            padding-top: 1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.36s ease, transform 0.36s ease;
+        }
+
+        /* Staggered Einblendung beim Hover / Tap */
+        .feature-card:hover .tl-item:nth-child(1),
+        .feature-card.card-open .tl-item:nth-child(1) { transition-delay: 0.18s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(2),
+        .feature-card.card-open .tl-item:nth-child(2) { transition-delay: 0.27s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(3),
+        .feature-card.card-open .tl-item:nth-child(3) { transition-delay: 0.36s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(4),
+        .feature-card.card-open .tl-item:nth-child(4) { transition-delay: 0.45s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(5),
+        .feature-card.card-open .tl-item:nth-child(5) { transition-delay: 0.54s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(6),
+        .feature-card.card-open .tl-item:nth-child(6) { transition-delay: 0.63s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(7),
+        .feature-card.card-open .tl-item:nth-child(7) { transition-delay: 0.72s; opacity: 1; transform: none; }
+        .feature-card:hover .tl-item:nth-child(8),
+        .feature-card.card-open .tl-item:nth-child(8) { transition-delay: 0.81s; opacity: 1; transform: none; }
+
+        /* Punkte auf der Linie */
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: calc(-20px - 4px);
+            top: calc(1rem + 5px);
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .tl-item.done::before {
+            background: #c94f0c;
+            box-shadow:
+                0 0 0 3px rgba(201,79,12,0.18),
+                0 0 10px rgba(201,79,12,0.65),
+                0 0 22px rgba(255,140,26,0.28);
+        }
+
+        .tl-item.planned::before {
+            background: transparent;
+            border: 1.5px solid rgba(201,79,12,0.38);
+            box-shadow: 0 0 8px rgba(201,79,12,0.15);
+        }
+
+        .tl-date {
+            font-size: 0.62rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #c94f0c;
+        }
+
+        .tl-item.planned .tl-date { color: rgba(201,79,12,0.48); }
+
+        .tl-label {
+            font-size: 0.82rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.88);
+        }
+
+        .tl-item.planned .tl-label { color: rgba(255,255,255,0.4); }
+
+        /* ── Website-Button ───────────────────────────────────────── */
+
+        .card-btn-wrap {
+            padding: 0 1.3rem 1.3rem 1.3rem;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.36s ease 0.6s, transform 0.36s ease 0.6s;
+        }
+
+        .feature-card:hover .card-btn-wrap,
+        .feature-card.card-open .card-btn-wrap {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (hover: none), (pointer: coarse) {
+            .feature-card:hover:not(.card-open) {
+                max-height: 88px;
+                opacity: 0.75;
+                border-color: rgba(255,255,255,0.1);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            }
+
+            .feature-card:hover:not(.card-open) .card-chevron {
+                transform: rotate(45deg) translateY(-2px);
+                border-color: rgba(255,255,255,0.35);
+            }
+
+            .feature-card:hover:not(.card-open) .tl-item,
+            .feature-card:hover:not(.card-open) .card-btn-wrap {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+        }
+
+        .card-btn {
+            display: block;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.75);
+            font-size: 0.78rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition:
+                background 0.3s ease,
+                border-color 0.3s ease,
+                color 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background: rgba(255,255,255,0.10);
+            border-color: rgba(255,255,255,0.65);
+            color: #fff;
+            box-shadow:
+                0 0 12px rgba(255,255,255,0.25),
+                0 0 30px rgba(255,255,255,0.10);
+        }
+
+        /* ── Footer ───────────────────────────────────────────────── */
+
+        footer {
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem; margin-bottom: 1rem;
+        }
+
+        .footer-section { line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+        .footer-section strong {
+            display: block; font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.4); margin-bottom: 0.4rem;
+        }
+
+        .footer-section a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.3s ease; }
+        .footer-section a:hover { color: #fff; }
+
+        .footer-copyright {
+            text-align: center; margin-top: 1.5rem; padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.7rem; color: rgba(255,255,255,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem 0.75rem; }
+            .tagline { font-size: 1.6rem; margin-bottom: 2rem; }
+            .cards-row {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+                margin-top: 0.5rem;
+            }
+            .feature-card { width: min(286px, 88vw); }
+            .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; font-size: 0.6rem; }
+            .footer-section strong { font-size: 0.55rem; margin-bottom: 0.25rem; }
+            .footer-section { font-size: 0.6rem; line-height: 1.4; }
+        }
+        @media (max-width: 375px) {
+            .tagline { font-size: 1.3rem; }
+            .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+        }
+        @media (min-width: 1024px) {
+            .tagline { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="metalCanvas"></canvas>
+
+    <div class="container">
+        <header>
+            <h1 class="logo"><strong>Nico Ohm</strong> - NOQCode</h1>
+        </header>
+
+        <main>
+            <h2 class="tagline">Designed for the future<br>- with the future</h2>
+
+            <div class="cards-row">
+                <div class="feature-card expertise-card">
+
+                    <div class="card-header" role="button" tabindex="0" aria-expanded="false" aria-label="Nico Ohm Expertise öffnen oder schließen">
+                        <img src="Pic_Nico_head.png" alt="Nico Ohm" class="profile-image">
+                        <span class="card-copy">
+                            <span class="card-title">Nico Ohm</span>
+                            <span class="card-subtitle">Expertise</span>
+                        </span>
+                        <span class="card-chevron"></span>
+                    </div>
+
+                    <div class="timeline">
+
+                        <div class="tl-item done">
+                            <span class="tl-date">KI &amp; LLM</span>
+                            <span class="tl-label">Claude Code, Codex, Gemini, Copilot</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Generativ</span>
+                            <span class="tl-label">Nano Banana, Microsoft Designer, Fal.ai</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Sprachen</span>
+                            <span class="tl-label">TypeScript, JavaScript, HTML, CSS</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">App</span>
+                            <span class="tl-label">React Native, Expo, EAS Build, RevenueCat, Claude API</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Backend</span>
+                            <span class="tl-label">Supabase, PostgreSQL, OAuth</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Web &amp; 3D</span>
+                            <span class="tl-label">WebGL, Three.js</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Tools</span>
+                            <span class="tl-label">Git, GitHub, VS Code, Terminal</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Enterprise</span>
+                            <span class="tl-label">SAP SD</span>
+                        </div>
+
+                    </div>
+
+                    <div class="card-btn-wrap">
+                        <a class="card-btn" href="https://github.com/Nico-Ohm" target="_blank" rel="noopener">
+                            GitHub
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="feature-card practiprep-card">
+
+                    <div class="card-header" role="button" tabindex="0" aria-expanded="false" aria-label="PractiPrep Roadmap öffnen oder schließen">
+                        <img src="logo_grayscale.png" alt="PractiPrep Logo" class="card-logo">
+                        <span class="card-copy">
+                            <span class="card-title">PractiPrep</span>
+                            <span class="card-subtitle">Roadmap</span>
+                        </span>
+                        <span class="card-chevron"></span>
+                    </div>
+
+                    <div class="timeline">
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Herbst 2025</span>
+                            <span class="tl-label">Idee &amp; Konzept</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Dez 2025</span>
+                            <span class="tl-label">iOS Entwicklung starten</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">April 2026</span>
+                            <span class="tl-label">Website live</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Mai 2026</span>
+                            <span class="tl-label">Apple Release</span>
+                        </div>
+
+                        <div class="tl-item done">
+                            <span class="tl-date">Mai 2026</span>
+                            <span class="tl-label">Erstes iOS Update</span>
+                        </div>
+
+                        <div class="tl-item planned">
+                            <span class="tl-date">Juni 2026</span>
+                            <span class="tl-label">UI Update</span>
+                        </div>
+
+                        <div class="tl-item planned">
+                            <span class="tl-date">Juni 2026</span>
+                            <span class="tl-label">Android Entwicklung starten</span>
+                        </div>
+
+                    </div>
+
+                    <div class="card-btn-wrap">
+                        <a class="card-btn" href="https://practiprep.de/" target="_blank" rel="noopener">
+                            Website
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <strong>Impressum</strong>
+                    Nico Ohm - NOQCode<br>
+                    c/o flexdienst – #20111<br>
+                    Kurt-Schumacher-Straße 76<br>
+                    67663 Kaiserslautern<br>
+                    Deutschland
+                </div>
+                <div class="footer-section">
+                    <strong>Kontakt</strong>
+                    E-Mail: <a href="mailto:info@noqcode.de">info@noqcode.de</a><br>
+                    Web: <a href="https://www.noqcode.de">www.noqcode.de</a>
+                </div>
+                <div class="footer-section">
+                    <strong>Unternehmen</strong>
+                    Einzelunternehmen<br>
+                    Entwicklung & Innovation<br>
+                    Made in Germany
+                </div>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2025 Nico Ohm &ndash; NOQCode &middot; Alle Rechte vorbehalten
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    (function () {
+        const canvas = document.getElementById('metalCanvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+        if (!gl) {
+            canvas.style.background = 'linear-gradient(135deg,#04050a 0%,#0a0d18 100%)';
+            return;
+        }
+
+        const VERT = `
+            attribute vec2 aPos;
+            varying vec2 vUV;
+            void main() {
+                vUV = aPos * 0.5 + 0.5;
+                gl_Position = vec4(aPos, 0.0, 1.0);
+            }
+        `;
+
+        const WAVE_FRAG = `
+            precision highp float;
+            varying vec2 vUV;
+            uniform sampler2D uCur;
+            uniform sampler2D uPrev;
+            uniform vec2 uTexel;
+            uniform vec2 uRippleUV;
+            uniform float uDrop;
+
+            float dec(float v) { return v * 2.0 - 1.0; }
+            float enc(float h) { return clamp(h * 0.5 + 0.5, 0.0, 1.0); }
+
+            void main() {
+                float cur  = dec(texture2D(uCur,  vUV).r);
+                float prev = dec(texture2D(uPrev, vUV).r);
+                float l    = dec(texture2D(uCur,  vUV - vec2(uTexel.x, 0.0)).r);
+                float r    = dec(texture2D(uCur,  vUV + vec2(uTexel.x, 0.0)).r);
+                float u    = dec(texture2D(uCur,  vUV + vec2(0.0, uTexel.y)).r);
+                float d    = dec(texture2D(uCur,  vUV - vec2(0.0, uTexel.y)).r);
+
+                float next = (l + r + u + d) * 0.5 - prev;
+                next *= 0.991;
+
+                if (uDrop > 0.5) {
+                    float dist = distance(vUV, uRippleUV);
+                    next += smoothstep(0.028, 0.0, dist) * 1.0;
+                }
+
+                gl_FragColor = vec4(enc(next), 0.0, 0.0, 1.0);
+            }
+        `;
+
+        const RENDER_FRAG = `
+            precision highp float;
+            varying vec2 vUV;
+            uniform sampler2D uWave;
+            uniform vec2 uTexel;
+            uniform float uTime;
+            uniform vec2 uMouseUV;
+
+            float dec(float v) { return v * 2.0 - 1.0; }
+
+            void main() {
+                float s = 3.0;
+                float hL = dec(texture2D(uWave, vUV - vec2(uTexel.x * s, 0.0)).r);
+                float hR = dec(texture2D(uWave, vUV + vec2(uTexel.x * s, 0.0)).r);
+                float hD = dec(texture2D(uWave, vUV - vec2(0.0, uTexel.y * s)).r);
+                float hU = dec(texture2D(uWave, vUV + vec2(0.0, uTexel.y * s)).r);
+                float h  = dec(texture2D(uWave, vUV).r);
+
+                vec3 N = normalize(vec3((hL - hR) * 9.0, (hD - hU) * 9.0, 1.0));
+                vec3 V = vec3(0.0, 0.0, 1.0);
+
+                vec3 L1 = normalize(vec3(0.65, 0.9, 1.0));
+                float d1 = max(dot(N, L1), 0.0);
+                float s1 = pow(max(dot(reflect(-L1, N), V), 0.0), 280.0);
+
+                vec3 L2 = normalize(vec3(-0.5, -0.3, 0.55));
+                float d2 = max(dot(N, L2), 0.0) * 0.25;
+                float s2 = pow(max(dot(reflect(-L2, N), V), 0.0), 64.0) * 0.22;
+
+                vec3 L3 = normalize(vec3(0.1, -0.9, 0.35));
+                float s3 = pow(max(dot(reflect(-L3, N), V), 0.0), 24.0) * 0.12;
+
+                vec3 base  = vec3(0.030, 0.035, 0.050);
+                vec3 steel = vec3(0.62,  0.67,  0.78);
+                vec3 spec  = vec3(0.90,  0.94,  1.00);
+
+                vec3 color = base;
+                color += (d1 + d2) * steel * 0.16;
+                color += s1 * spec * 2.2;
+                color += s2 * spec * 0.55;
+                color += s3 * spec * 0.28;
+
+                float heat = max(h, 0.0);
+                color += heat * vec3(0.70, 0.28, 0.04) * 0.55;
+                color += heat * heat * vec3(1.0, 0.55, 0.10) * 0.30;
+
+                float iriPhase = h * 14.0 + uTime * 0.4;
+                vec3 iri = vec3(
+                    sin(iriPhase)        * 0.5 + 0.5,
+                    sin(iriPhase + 2.09) * 0.5 + 0.5,
+                    sin(iriPhase + 4.19) * 0.5 + 0.5
+                );
+                color += iri * abs(h) * 0.10;
+
+                color *= 1.0 - max(-h, 0.0) * 0.28;
+
+                float md = distance(vUV, uMouseUV);
+                color += smoothstep(0.22, 0.0, md) * vec3(0.04, 0.05, 0.09);
+
+                vec2 e = vUV * 2.0 - 1.0;
+                float vig = 1.0 - dot(e * 0.42, e * 0.42);
+                color *= clamp(vig, 0.0, 1.0) * 0.32 + 0.68;
+
+                gl_FragColor = vec4(color, 1.0);
+            }
+        `;
+
+        function mkShader(type, src) {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            return s;
+        }
+        function mkProg(fs) {
+            const p = gl.createProgram();
+            gl.attachShader(p, mkShader(gl.VERTEX_SHADER, VERT));
+            gl.attachShader(p, mkShader(gl.FRAGMENT_SHADER, fs));
+            gl.linkProgram(p);
+            return p;
+        }
+
+        const waveProg   = mkProg(WAVE_FRAG);
+        const renderProg = mkProg(RENDER_FRAG);
+
+        const quadBuf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+        function mkFBO(w, h) {
+            const neutral = new Uint8Array(w * h * 4);
+            for (let i = 0; i < neutral.length; i += 4) { neutral[i] = 128; neutral[i+3] = 255; }
+            const tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, neutral);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            const fbo = gl.createFramebuffer();
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            return { fbo, tex };
+        }
+
+        const IS_MOBILE = window.innerWidth < 768;
+        const SIM_W = IS_MOBILE ? 256 : 512;
+        const SIM_H = IS_MOBILE
+            ? Math.round(256 * window.innerHeight / window.innerWidth)
+            : Math.round(512 * window.innerHeight / window.innerWidth);
+
+        let fbos = [mkFBO(SIM_W, SIM_H), mkFBO(SIM_W, SIM_H), mkFBO(SIM_W, SIM_H)];
+        let prev = 0, cur = 1, nxt = 2;
+
+        function resize() {
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let mouseUV  = [0.5, 0.5];
+        let rippleUV = [0.5, 0.5];
+        let dropFlag = false;
+        let lastDrop = 0;
+        let lastTouchTime = 0;
+
+        function onMove(px, py) {
+            const now = performance.now();
+            mouseUV  = [px / window.innerWidth, 1.0 - py / window.innerHeight];
+            rippleUV = [mouseUV[0], mouseUV[1]];
+            if (now - lastDrop > 14) { dropFlag = true; lastDrop = now; }
+        }
+
+        // Synthetische Maus-Events nach Touch (iOS/Android) überspringen
+        window.addEventListener('mousemove', e => {
+            if (performance.now() - lastTouchTime < 500) return;
+            onMove(e.clientX, e.clientY);
+        });
+
+        const cards = Array.from(document.querySelectorAll('.feature-card'));
+        const cardHeaders = Array.from(document.querySelectorAll('.card-header'));
+        let openCard = null;
+        let touchStartX = 0, touchStartY = 0;
+        let touchCard = null;
+        let touchHeader = null;
+
+        function setOpenCard(nextCard) {
+            cards.forEach(item => {
+                const isOpen = item === nextCard;
+                item.classList.toggle('card-open', isOpen);
+                const header = item.querySelector('.card-header');
+                if (header) header.setAttribute('aria-expanded', String(isOpen));
+            });
+            openCard = nextCard;
+        }
+
+        function toggleCard(card) {
+            setOpenCard(openCard === card ? null : card);
+        }
+
+        cardHeaders.forEach(header => {
+            const parentCard = header.closest('.feature-card');
+
+            header.addEventListener('click', () => {
+                if (performance.now() - lastTouchTime < 500) return;
+                toggleCard(parentCard);
+            });
+
+            header.addEventListener('keydown', e => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                e.preventDefault();
+                toggleCard(parentCard);
+            });
+        });
+
+        cards.forEach(item => {
+            item.addEventListener('mouseleave', () => {
+                const isMouseDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                if (isMouseDevice && openCard === item) setOpenCard(null);
+            });
+        });
+
+        window.addEventListener('touchstart', e => {
+            lastTouchTime = performance.now();
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchHeader = e.target.closest('.card-header');
+            touchCard = touchHeader ? touchHeader.closest('.feature-card') : null;
+            if (!openCard && !touchHeader) {
+                onMove(e.touches[0].clientX, e.touches[0].clientY);
+                dropFlag = true;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', e => {
+            // Kein preventDefault wenn Touch auf Header startete → click-Event bleibt erhalten
+            if (!openCard && !touchHeader) {
+                e.preventDefault();
+                onMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        // Alles über touchend — click auf iOS zu unzuverlässig auf Canvas/Custom-Elementen
+        window.addEventListener('touchend', e => {
+            const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+            const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+            if (dx > 15 || dy > 15) return;
+
+            if (touchHeader && touchCard) {
+                // Header-Tap: auf-/zuklappen
+                toggleCard(touchCard);
+            } else if (openCard && !openCard.contains(e.target)) {
+                // Tap außerhalb: schließen
+                setOpenCard(null);
+            }
+        }, { passive: true });
+
+        function bindTex(prog, name, tex, unit) {
+            gl.activeTexture(gl.TEXTURE0 + unit);
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.uniform1i(gl.getUniformLocation(prog, name), unit);
+        }
+        function bindQuad(prog) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+            const loc = gl.getAttribLocation(prog, 'aPos');
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+        }
+
+        const t0 = performance.now();
+
+        function frame() {
+            const time = (performance.now() - t0) / 1000.0;
+
+            gl.useProgram(waveProg);
+            bindQuad(waveProg);
+            gl.viewport(0, 0, SIM_W, SIM_H);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[nxt].fbo);
+            bindTex(waveProg, 'uCur',  fbos[cur].tex,  0);
+            bindTex(waveProg, 'uPrev', fbos[prev].tex, 1);
+            gl.uniform2f(gl.getUniformLocation(waveProg, 'uTexel'),    1.0 / SIM_W, 1.0 / SIM_H);
+            gl.uniform2f(gl.getUniformLocation(waveProg, 'uRippleUV'), rippleUV[0], rippleUV[1]);
+            gl.uniform1f(gl.getUniformLocation(waveProg, 'uDrop'),     dropFlag ? 1.0 : 0.0);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            dropFlag = false;
+
+            const tmp = prev; prev = cur; cur = nxt; nxt = tmp;
+
+            gl.useProgram(renderProg);
+            bindQuad(renderProg);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            bindTex(renderProg, 'uWave', fbos[cur].tex, 0);
+            gl.uniform2f(gl.getUniformLocation(renderProg, 'uTexel'),   1.0 / SIM_W, 1.0 / SIM_H);
+            gl.uniform1f(gl.getUniformLocation(renderProg, 'uTime'),    time);
+            gl.uniform2f(gl.getUniformLocation(renderProg, 'uMouseUV'), mouseUV[0], mouseUV[1]);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            requestAnimationFrame(frame);
+        }
+
+        frame();
+    })();
+    </script>
+</body>
+</html>

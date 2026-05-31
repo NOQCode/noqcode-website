@@ -1,0 +1,23 @@
+# Abhängigkeiten
+node_modules/
+
+# Build-Ausgaben
+dist/
+build/
+
+# Secrets / Umgebungsvariablen
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Betriebssystem-Müll
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor-Konfiguration
+.vscode/
+.idea/
