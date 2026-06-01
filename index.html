@@ -43,13 +43,27 @@
         }
 
         .logo {
-            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            font-size: 1.25rem;
             font-weight: 300;
             letter-spacing: 0.05em;
             text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,1);
         }
 
-        .logo strong { font-weight: 600; font-size: 0.85rem; }
+        .logo strong { font-weight: 600; font-size: 0.98rem; }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            display: block;
+            flex-shrink: 0;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.92;
+            mix-blend-mode: screen;
+        }
 
         main {
             flex: 1;
@@ -430,7 +444,10 @@
 
     <div class="container">
         <header>
-            <h1 class="logo"><strong>Nico Ohm</strong> - NOQCode</h1>
+            <h1 class="logo">
+                <img src="NOQCode_Profile_GitHub_Silver_1024.png" alt="NOQCode Logo" class="brand-logo">
+                <span><strong>Nico Ohm</strong> - NOQCode</span>
+            </h1>
         </header>
 
         <main>
