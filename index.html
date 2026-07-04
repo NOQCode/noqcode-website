@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="description" content="NOQCode - Designed with the future, for the future. Entwicklung & Innovation.">
+    <link rel="icon" type="image/png" href="NOQCode_Profile_GitHub_Silver_1024.png">
     <title>Nico Ohm - NOQCode</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -97,10 +98,12 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 4rem;
+            gap: 0;
             width: 100%;
             margin-top: 2rem;
         }
+
+        .feature-card + .feature-card { margin-left: 4rem; }
 
         .feature-card {
             display: block;
@@ -159,12 +162,25 @@
         .card-header {
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0;
+            width: 100%;
             padding: 1.1rem 1.3rem;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: left;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             touch-action: manipulation;
+        }
+
+        .card-header > :first-child { margin-right: 0.85rem; }
+
+        .card-header:focus-visible {
+            outline: 2px solid rgba(255,255,255,0.7);
+            outline-offset: -3px;
         }
 
         .card-chevron {
@@ -441,7 +457,7 @@
         .footer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem; margin-bottom: 1rem;
+            grid-gap: 2rem; gap: 2rem; margin-bottom: 1rem;
         }
 
         .footer-section { line-height: 1.6; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
@@ -467,20 +483,33 @@
             .cards-row {
                 flex-direction: column;
                 align-items: center;
-                gap: 1rem;
+                gap: 0;
                 margin-top: 0.5rem;
             }
-            .feature-card { width: min(286px, 88vw); }
-            .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; font-size: 0.6rem; }
+            .feature-card { width: 88vw; width: min(286px, 88vw); }
+            .feature-card + .feature-card { margin-left: 0; margin-top: 1rem; }
+            .footer-grid { grid-template-columns: repeat(3, 1fr); grid-gap: 0.75rem; gap: 0.75rem; font-size: 0.6rem; }
             .footer-section strong { font-size: 0.55rem; margin-bottom: 0.25rem; }
             .footer-section { font-size: 0.6rem; line-height: 1.4; }
         }
         @media (max-width: 375px) {
             .tagline { font-size: 1.3rem; }
-            .footer-grid { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+            .footer-grid { grid-template-columns: repeat(3, 1fr); grid-gap: 0.5rem; gap: 0.5rem; }
         }
         @media (min-width: 1024px) {
             .tagline { font-size: 3rem; }
+        }
+
+
+        @media (prefers-reduced-motion: reduce) {
+            .feature-card,
+            .card-chevron,
+            .tl-item,
+            .card-btn-wrap,
+            .card-btn {
+                transition-duration: 0.01ms !important;
+                transition-delay: 0ms !important;
+            }
         }
     </style>
 </head>
@@ -501,14 +530,14 @@
             <div class="cards-row">
                 <div class="feature-card expertise-card">
 
-                    <div class="card-header" role="button" tabindex="0" aria-expanded="false" aria-label="Nico Ohm Expertise öffnen oder schließen">
+                    <button class="card-header" type="button" aria-expanded="false" aria-label="Nico Ohm Expertise öffnen oder schließen">
                         <img src="Pic_Nico_head.png" alt="Nico Ohm" class="profile-image">
                         <span class="card-copy">
                             <span class="card-title">Nico Ohm</span>
                             <span class="card-subtitle">Expertise</span>
                         </span>
                         <span class="card-chevron"></span>
-                    </div>
+                    </button>
 
                     <div class="timeline">
 
@@ -564,14 +593,14 @@
 
                 <div class="feature-card practiprep-card">
 
-                    <div class="card-header" role="button" tabindex="0" aria-expanded="false" aria-label="PractiPrep Roadmap öffnen oder schließen">
+                    <button class="card-header" type="button" aria-expanded="false" aria-label="PractiPrep Roadmap öffnen oder schließen">
                         <img src="logo_grayscale.png" alt="PractiPrep Logo" class="card-logo">
                         <span class="card-copy">
                             <span class="card-title">PractiPrep</span>
                             <span class="card-subtitle">Roadmap</span>
                         </span>
                         <span class="card-chevron"></span>
-                    </div>
+                    </button>
 
                     <div class="timeline">
 
@@ -654,6 +683,45 @@
     (function () {
         const canvas = document.getElementById('metalCanvas');
         const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        const cards = Array.from(document.querySelectorAll('.feature-card'));
+        const cardHeaders = Array.from(document.querySelectorAll('.card-header'));
+        let openCard = null;
+
+        function setOpenCard(nextCard) {
+            cards.forEach(item => {
+                const isOpen = item === nextCard;
+                item.classList.toggle('card-open', isOpen);
+                item.querySelector('.card-header').setAttribute('aria-expanded', String(isOpen));
+            });
+            openCard = nextCard;
+        }
+
+        cardHeaders.forEach(header => {
+            const parentCard = header.closest('.feature-card');
+
+            header.addEventListener('click', () => {
+                setOpenCard(openCard === parentCard ? null : parentCard);
+            });
+
+            header.addEventListener('pointerdown', event => {
+                if (event.pointerType !== 'mouse') parentCard.classList.add('card-press');
+            });
+
+            ['pointerup', 'pointercancel', 'pointerleave'].forEach(eventName => {
+                header.addEventListener(eventName, () => parentCard.classList.remove('card-press'));
+            });
+        });
+
+        document.addEventListener('click', event => {
+            if (openCard && !event.target.closest('.feature-card')) setOpenCard(null);
+        });
+
+        cards.forEach(item => {
+            item.addEventListener('mouseleave', () => {
+                const isMouseDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                if (isMouseDevice && openCard === item) setOpenCard(null);
+            });
+        });
 
         if (!gl) {
             canvas.style.background = 'linear-gradient(135deg,#04050a 0%,#0a0d18 100%)';
@@ -670,7 +738,7 @@
         `;
 
         const WAVE_FRAG = `
-            precision highp float;
+            precision mediump float;
             varying vec2 vUV;
             uniform sampler2D uCur;
             uniform sampler2D uPrev;
@@ -702,7 +770,7 @@
         `;
 
         const RENDER_FRAG = `
-            precision highp float;
+            precision mediump float;
             varying vec2 vUV;
             uniform sampler2D uWave;
             uniform vec2 uTexel;
@@ -841,56 +909,9 @@
             onMove(e.clientX, e.clientY);
         });
 
-        const cards = Array.from(document.querySelectorAll('.feature-card'));
-        const cardHeaders = Array.from(document.querySelectorAll('.card-header'));
-        let openCard = null;
-        let touchStartX = 0, touchStartY = 0;
-        let touchCard = null;
-        let touchHeader = null;
-
-        function setOpenCard(nextCard) {
-            cards.forEach(item => {
-                const isOpen = item === nextCard;
-                item.classList.toggle('card-open', isOpen);
-                const header = item.querySelector('.card-header');
-                if (header) header.setAttribute('aria-expanded', String(isOpen));
-            });
-            openCard = nextCard;
-        }
-
-        function toggleCard(card) {
-            setOpenCard(openCard === card ? null : card);
-        }
-
-        cardHeaders.forEach(header => {
-            const parentCard = header.closest('.feature-card');
-
-            header.addEventListener('click', () => {
-                if (performance.now() - lastTouchTime < 500) return;
-                toggleCard(parentCard);
-            });
-
-            header.addEventListener('keydown', e => {
-                if (e.key !== 'Enter' && e.key !== ' ') return;
-                e.preventDefault();
-                toggleCard(parentCard);
-            });
-        });
-
-        cards.forEach(item => {
-            item.addEventListener('mouseleave', () => {
-                const isMouseDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-                if (isMouseDevice && openCard === item) setOpenCard(null);
-            });
-        });
-
         window.addEventListener('touchstart', e => {
             lastTouchTime = performance.now();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchHeader = e.target.closest('.card-header');
-            touchCard = touchHeader ? touchHeader.closest('.feature-card') : null;
-            if (touchCard) touchCard.classList.add('card-press');
+            const touchHeader = e.target.closest('.card-header');
             if (!openCard && !touchHeader) {
                 onMove(e.touches[0].clientX, e.touches[0].clientY);
                 dropFlag = true;
@@ -898,36 +919,10 @@
         }, { passive: true });
 
         window.addEventListener('touchmove', e => {
-            // Kein preventDefault wenn Touch auf Header startete → click-Event bleibt erhalten
-            if (touchCard) {
-                const dx = Math.abs(e.touches[0].clientX - touchStartX);
-                const dy = Math.abs(e.touches[0].clientY - touchStartY);
-                if (dx > 12 || dy > 12) touchCard.classList.remove('card-press');
-            }
+            const touchHeader = e.target.closest('.card-header');
             if (!openCard && !touchHeader) {
-                e.preventDefault();
                 onMove(e.touches[0].clientX, e.touches[0].clientY);
             }
-        }, { passive: false });
-
-        // Alles über touchend — click auf iOS zu unzuverlässig auf Canvas/Custom-Elementen
-        window.addEventListener('touchend', e => {
-            const dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
-            const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-            if (touchCard) touchCard.classList.remove('card-press');
-            if (dx > 15 || dy > 15) return;
-
-            if (touchHeader && touchCard) {
-                // Header-Tap: auf-/zuklappen
-                toggleCard(touchCard);
-            } else if (openCard && !openCard.contains(e.target)) {
-                // Tap außerhalb: schließen
-                setOpenCard(null);
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchcancel', () => {
-            if (touchCard) touchCard.classList.remove('card-press');
         }, { passive: true });
 
         function bindTex(prog, name, tex, unit) {
