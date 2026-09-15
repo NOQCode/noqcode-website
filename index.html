@@ -113,18 +113,22 @@
         .feature-card + .feature-card { margin-left: 4rem; }
 
         .feature-card {
+            --card-max-height: 88px;
+            --card-opacity: 0.75;
+            --card-border-color: rgba(255,255,255,0.1);
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.35);
             display: block;
             width: 286px;
             overflow: hidden;
             border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid var(--card-border-color);
             background: rgba(10,10,16,0.6);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
-            opacity: 0.75;
+            box-shadow: var(--card-shadow);
+            opacity: var(--card-opacity);
             cursor: default;
-            max-height: 88px;
+            max-height: var(--card-max-height);
             transition:
                 max-height 0.65s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.18s ease,
@@ -134,15 +138,16 @@
         }
 
         .feature-card.card-open {
-            max-height: 820px;
-            opacity: 1;
-            border-color: rgba(255,255,255,0.28);
-            box-shadow:
+            --card-max-height: 820px;
+            --card-opacity: 1;
+            --card-border-color: rgba(255,255,255,0.28);
+            --card-shadow:
                 0 0 0 1px rgba(255,255,255,0.08),
                 0 0 28px rgba(255,255,255,0.12),
                 0 0 55px rgba(var(--accent-rgb),0.10),
                 0 8px 30px rgba(0,0,0,0.5);
         }
+
 
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
             .feature-card {
@@ -157,10 +162,10 @@
 
         @media (hover: hover) and (pointer: fine) {
             .feature-card:hover {
-                max-height: 820px;
-                opacity: 1;
-                border-color: rgba(255,255,255,0.28);
-                box-shadow:
+                --card-max-height: 820px;
+                --card-opacity: 1;
+                --card-border-color: rgba(255,255,255,0.28);
+                --card-shadow:
                     0 0 0 1px rgba(255,255,255,0.08),
                     0 0 28px rgba(255,255,255,0.12),
                     0 0 55px rgba(var(--accent-rgb),0.10),
