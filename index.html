@@ -11,6 +11,11 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --accent: #18c7ff;
+            --accent-rgb: 24,199,255;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #04050a;
@@ -135,7 +140,7 @@
             box-shadow:
                 0 0 0 1px rgba(255,255,255,0.08),
                 0 0 28px rgba(255,255,255,0.12),
-                0 0 55px rgba(24,199,255,0.10),
+                0 0 55px rgba(var(--accent-rgb),0.10),
                 0 8px 30px rgba(0,0,0,0.5);
         }
 
@@ -158,7 +163,7 @@
                 box-shadow:
                     0 0 0 1px rgba(255,255,255,0.08),
                     0 0 28px rgba(255,255,255,0.12),
-                    0 0 55px rgba(24,199,255,0.10),
+                    0 0 55px rgba(var(--accent-rgb),0.10),
                     0 8px 30px rgba(0,0,0,0.5);
             }
         }
@@ -299,9 +304,9 @@
             width: 1px;
             background: linear-gradient(
                 to bottom,
-                #18c7ff 0%,
-                #18c7ff 85%,
-                rgba(24,199,255,0.12) 100%
+                var(--accent) 0%,
+                var(--accent) 85%,
+                rgba(var(--accent-rgb),0.12) 100%
             );
         }
 
@@ -354,17 +359,17 @@
         }
 
         .tl-item.done::before {
-            background: #18c7ff;
+            background: var(--accent);
             box-shadow:
-                0 0 0 3px rgba(24,199,255,0.18),
-                0 0 10px rgba(24,199,255,0.65),
-                0 0 22px rgba(24,199,255,0.28);
+                0 0 0 3px rgba(var(--accent-rgb),0.18),
+                0 0 10px rgba(var(--accent-rgb),0.65),
+                0 0 22px rgba(var(--accent-rgb),0.28);
         }
 
         .tl-item.planned::before {
             background: transparent;
-            border: 1.5px solid rgba(24,199,255,0.38);
-            box-shadow: 0 0 8px rgba(24,199,255,0.15);
+            border: 1.5px solid rgba(var(--accent-rgb),0.38);
+            box-shadow: 0 0 8px rgba(var(--accent-rgb),0.15);
         }
 
         .tl-date {
@@ -372,10 +377,10 @@
             font-weight: 500;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #18c7ff;
+            color: var(--accent);
         }
 
-        .tl-item.planned .tl-date { color: rgba(24,199,255,0.48); }
+        .tl-item.planned .tl-date { color: rgba(var(--accent-rgb),0.48); }
 
         .tl-label {
             font-size: 0.82rem;
