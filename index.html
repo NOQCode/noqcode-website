@@ -755,7 +755,7 @@
             return;
         }
 
-        const VERT = `
+        const VERTEX_SHADER_SOURCE = `
             attribute vec2 aPos;
             varying vec2 vUV;
             void main() {
@@ -764,7 +764,7 @@
             }
         `;
 
-        const WAVE_FRAG = `
+        const WAVE_FRAGMENT_SHADER_SOURCE = `
             precision mediump float;
             varying vec2 vUV;
             uniform sampler2D uCur;
@@ -796,7 +796,7 @@
             }
         `;
 
-        const RENDER_FRAG = `
+        const RENDER_FRAGMENT_SHADER_SOURCE = `
             precision mediump float;
             varying vec2 vUV;
             uniform sampler2D uWave;
@@ -863,7 +863,7 @@
             }
         `;
 
-        function mkShader(type, src) {
+        function compileShader(type, src) {
             const s = gl.createShader(type);
             gl.shaderSource(s, src);
             gl.compileShader(s);
@@ -873,9 +873,9 @@
             }
             return s;
         }
-        function mkProg(fs) {
-            const vs = mkShader(gl.VERTEX_SHADER, VERT);
-            const frag = mkShader(gl.FRAGMENT_SHADER, fs);
+        function createProgram(fragmentSource) {
+            const vs = compileShader(gl.VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+            const frag = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
             if (!vs || !frag) return null;
             const p = gl.createProgram();
             gl.attachShader(p, vs);
@@ -890,10 +890,10 @@
             return p;
         }
 
-        const waveProg   = mkProg(WAVE_FRAG);
-        const renderProg = mkProg(RENDER_FRAG);
+        const waveProgram   = createProgram(WAVE_FRAGMENT_SHADER_SOURCE);
+        const renderProgram = createProgram(RENDER_FRAGMENT_SHADER_SOURCE);
 
-        if (!waveProg || !renderProg) {
+        if (!waveProgram || !renderProgram) {
             useStaticCanvasFallback();
             return;
         }
@@ -902,7 +902,7 @@
         gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
 
-        function mkFBO(w, h) {
+        function createFramebufferTexture(w, h) {
             const neutral = new Uint8Array(w * h * 4);
             for (let i = 0; i < neutral.length; i += 4) { neutral[i] = 128; neutral[i+3] = 255; }
             const tex = gl.createTexture();
@@ -929,7 +929,7 @@
             ? Math.round(256 * window.innerHeight / window.innerWidth)
             : Math.round(512 * window.innerHeight / window.innerWidth);
 
-        let fbos = [mkFBO(SIM_W, SIM_H), mkFBO(SIM_W, SIM_H), mkFBO(SIM_W, SIM_H)];
+        let fbos = [createFramebufferTexture(SIM_W, SIM_H), createFramebufferTexture(SIM_W, SIM_H), createFramebufferTexture(SIM_W, SIM_H)];
         if (fbos.some(item => !item)) {
             useStaticCanvasFallback();
             return;
@@ -995,28 +995,28 @@
         function frame() {
             const time = (performance.now() - t0) / 1000.0;
 
-            gl.useProgram(waveProg);
-            bindQuad(waveProg);
+            gl.useProgram(waveProgram);
+            bindQuad(waveProgram);
             gl.viewport(0, 0, SIM_W, SIM_H);
             gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[nxt].fbo);
-            bindTex(waveProg, 'uCur',  fbos[cur].tex,  0);
-            bindTex(waveProg, 'uPrev', fbos[prev].tex, 1);
-            gl.uniform2f(gl.getUniformLocation(waveProg, 'uTexel'),    1.0 / SIM_W, 1.0 / SIM_H);
-            gl.uniform2f(gl.getUniformLocation(waveProg, 'uRippleUV'), rippleUV[0], rippleUV[1]);
-            gl.uniform1f(gl.getUniformLocation(waveProg, 'uDrop'),     dropFlag ? 1.0 : 0.0);
+            bindTex(waveProgram, 'uCur',  fbos[cur].tex,  0);
+            bindTex(waveProgram, 'uPrev', fbos[prev].tex, 1);
+            gl.uniform2f(gl.getUniformLocation(waveProgram, 'uTexel'),    1.0 / SIM_W, 1.0 / SIM_H);
+            gl.uniform2f(gl.getUniformLocation(waveProgram, 'uRippleUV'), rippleUV[0], rippleUV[1]);
+            gl.uniform1f(gl.getUniformLocation(waveProgram, 'uDrop'),     dropFlag ? 1.0 : 0.0);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             dropFlag = false;
 
             const tmp = prev; prev = cur; cur = nxt; nxt = tmp;
 
-            gl.useProgram(renderProg);
-            bindQuad(renderProg);
+            gl.useProgram(renderProgram);
+            bindQuad(renderProgram);
             gl.viewport(0, 0, canvas.width, canvas.height);
             gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-            bindTex(renderProg, 'uWave', fbos[cur].tex, 0);
-            gl.uniform2f(gl.getUniformLocation(renderProg, 'uTexel'),   1.0 / SIM_W, 1.0 / SIM_H);
-            gl.uniform1f(gl.getUniformLocation(renderProg, 'uTime'),    time);
-            gl.uniform2f(gl.getUniformLocation(renderProg, 'uMouseUV'), mouseUV[0], mouseUV[1]);
+            bindTex(renderProgram, 'uWave', fbos[cur].tex, 0);
+            gl.uniform2f(gl.getUniformLocation(renderProgram, 'uTexel'),   1.0 / SIM_W, 1.0 / SIM_H);
+            gl.uniform1f(gl.getUniformLocation(renderProgram, 'uTime'),    time);
+            gl.uniform2f(gl.getUniformLocation(renderProgram, 'uMouseUV'), mouseUV[0], mouseUV[1]);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
             requestAnimationFrame(frame);
