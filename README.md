@@ -65,9 +65,9 @@ No build pipeline, package installation, environment variables, or runtime backe
 ```text
 NOQCode_Website/
 ├── index.html                              Complete website, styling, and interaction logic
-├── NOQCode_Profile_GitHub_Silver_1024.png NOQCode brand mark and favicon source
-├── Pic_Nico_head.png                       Profile image used in the expertise card
-├── logo_grayscale.png                      PractiPrep logo used in the roadmap card
+├── noqcode-logo.png                       NOQCode brand mark and favicon source
+├── nico-ohm-profile.png                  Profile image used in the expertise card
+├── practiprep-logo.png                   PractiPrep logo used in the roadmap card
 ├── .gitignore                              Local ignore rules
 └── README.md                               Project documentation
 ```
