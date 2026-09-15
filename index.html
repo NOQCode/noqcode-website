@@ -99,7 +99,7 @@
             text-shadow: 0 0 40px rgba(0,0,0,0.85), 0 0 20px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,1);
         }
 
-        /* ── Karten ───────────────────────────────────────────────── */
+        /* ── Cards ─────────────────────────────────────────────────── */
 
         .cards-row {
             display: flex;
@@ -291,7 +291,7 @@
             color: rgba(255,255,255,0.42);
         }
 
-        /* ── Zeitstrang ───────────────────────────────────────────── */
+        /* ── Timeline ──────────────────────────────────────────────── */
 
         .timeline {
             position: relative;
@@ -299,7 +299,7 @@
             border-top: 1px solid rgba(255,255,255,0.07);
         }
 
-        /* Vertikale Linie in Orange */
+        /* Accent line */
         .timeline::before {
             content: '';
             position: absolute;
@@ -330,7 +330,7 @@
             transition: opacity 0.22s ease, transform 0.22s ease;
         }
 
-        /* Staggered Einblendung beim Hover / Tap */
+        /* Staggered reveal on hover / tap */
         .feature-card.card-open .tl-item:nth-child(1) { transition: opacity 0.36s ease, transform 0.36s ease; transition-delay: 0.18s; opacity: 1; transform: none; }
         .feature-card.card-open .tl-item:nth-child(2) { transition: opacity 0.36s ease, transform 0.36s ease; transition-delay: 0.27s; opacity: 1; transform: none; }
         .feature-card.card-open .tl-item:nth-child(3) { transition: opacity 0.36s ease, transform 0.36s ease; transition-delay: 0.36s; opacity: 1; transform: none; }
@@ -351,7 +351,7 @@
             .feature-card:hover .tl-item:nth-child(7) { transition: opacity 0.36s ease, transform 0.36s ease; transition-delay: 0.72s; opacity: 1; transform: none; }
             .feature-card:hover .tl-item:nth-child(8) { transition: opacity 0.36s ease, transform 0.36s ease; transition-delay: 0.81s; opacity: 1; transform: none; }
         }
-        /* Punkte auf der Linie */
+        /* Timeline dots */
         .tl-item::before {
             content: '';
             position: absolute;
@@ -395,7 +395,7 @@
 
         .tl-item.planned .tl-label { color: rgba(255,255,255,0.4); }
 
-        /* ── Website-Button ───────────────────────────────────────── */
+        /* ── Website buttons ───────────────────────────────────────── */
 
         .card-btn-wrap {
             padding: 0 1.3rem 1.3rem 1.3rem;
